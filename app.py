@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Initialize your DSPy configuration
-lm = dspy.LM("openai/gpt-4o-mini")
+lm = dspy.LM("openai/gpt-5-mini")
 dspy.settings.configure(lm=lm)
 
 @app.route('/', methods=['GET'])
