@@ -10,24 +10,79 @@
     <div class="container">
         <header>
             <h1>📚 Math Hint Generator</h1>
-            <p>Powered by DSPy - Get intelligent hints for solving math problems</p>
+            <p>Powered by DSPy - Get intelligent hints and check your answers</p>
         </header>
 
         <main>
-            <div class="input-section">
+            <!-- Initial Input Section -->
+            <div id="inputSection" class="input-section">
                 <label for="problem">Enter your math problem:</label>
                 <textarea 
                     id="problem" 
                     placeholder="e.g., Solve for x: 3x - 7 = 14"
                     rows="4"
                 ></textarea>
-                <button id="generateBtn">💡 Get Hint</button>
+                <button id="startBtn">▶ Start</button>
             </div>
 
-            <div id="error" class="error hidden"></div>
-            <div id="hint" class="hint-box hidden"></div>
+            <!-- Working Section (hidden initially) -->
+            <div id="workingSection" class="working-section hidden">
+                <!-- Problem Display -->
+                <div class="problem-display">
+                    <h3>Problem:</h3>
+                    <p id="problemDisplay"></p>
+                </div>
 
-            <div class="examples">
+                <div id="error" class="error hidden"></div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="getHintBtn">💡 Get a Hint</button>
+                    <button id="newProblemBtn" class="secondary">New Problem</button>
+                </div>
+
+                <!-- Main Answer Check Section -->
+                <div class="answer-section main-answer">
+                    <h3>Check Your Answer:</h3>
+                    <div class="answer-input-group">
+                        <input 
+                            type="text" 
+                            id="mainAnswer" 
+                            placeholder="Enter your answer..."
+                        >
+                        <button id="checkMainBtn">Check</button>
+                    </div>
+                    <div id="mainResult" class="result-box hidden"></div>
+                </div>
+
+                <!-- Hint Display -->
+                <div id="hintBox" class="hint-box hidden">
+                    <div class="hint-content">
+                        <span class="hint-icon">💡</span>
+                        <div>
+                            <h3>Hint Question:</h3>
+                            <p id="hintText"></p>
+                        </div>
+                    </div>
+
+                    <!-- Hint Answer Check Section -->
+                    <div class="hint-answer-section">
+                        <h4>Check Your Answer to the Hint:</h4>
+                        <div class="answer-input-group">
+                            <input 
+                                type="text" 
+                                id="hintAnswer" 
+                                placeholder="Enter your answer to the hint..."
+                            >
+                            <button id="checkHintBtn">Check</button>
+                        </div>
+                        <div id="hintResult" class="result-box hidden"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples Section -->
+            <div id="examplesSection" class="examples">
                 <h3>Try these examples:</h3>
                 <div class="example-grid">
                     <button class="example-btn">Solve for x: 2x + 5 = 13</button>
