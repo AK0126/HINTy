@@ -1,0 +1,3 @@
+# HINTy: Math Hint Generation with DSPy
+
+Description coming soon...
