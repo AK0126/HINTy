@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Hint Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Math Hint Generator</h1>
+            <p>Powered by DSPy - Get intelligent hints for solving math problems</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <label for="problem">Enter your math problem:</label>
+                <textarea 
+                    id="problem" 
+                    placeholder="e.g., Solve for x: 3x - 7 = 14"
+                    rows="4"
+                ></textarea>
+                <button id="generateBtn">💡 Get Hint</button>
+            </div>
+
+            <div id="error" class="error hidden"></div>
+            <div id="hint" class="hint-box hidden"></div>
+
+            <div class="examples">
+                <h3>Try these examples:</h3>
+                <div class="example-grid">
+                    <button class="example-btn">Solve for x: 2x + 5 = 13</button>
+                    <button class="example-btn">Find the derivative of f(x) = x³ + 2x²</button>
+                    <button class="example-btn">If a triangle has sides 3, 4, and 5, what type is it?</button>
+                    <button class="example-btn">Simplify: (x² - 9) / (x - 3)</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
