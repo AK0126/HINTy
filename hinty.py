@@ -6,15 +6,16 @@ mlflow.set_experiment("HINTy")
 
 mlflow.dspy.autolog()
 
-# Your DSPy signature and module
+# DSPy Signatures
 class MathHintGenerator(dspy.Signature):
-    """Generate a helpful hint for solving a math problem."""
-    problem: str = dspy.InputField()
-    answer: str = dspy.OutputField()
-    hint: str = dspy.OutputField(desc="A helpful hint for solving the problem. Must be posed as a question.")
+    """Generate a helpful hint as a smaller math question that guides towards solving the problem. 
+    If a previous hint is provided, generate the next hint that builds upon it and gets closer to the solution."""
+    problem = dspy.InputField(desc="The original math problem to solve")
+    previous_hint = dspy.InputField(desc="The previous hint that was given, if any")
+    hint_number = dspy.InputField(desc="Which hint number this is (1, 2, 3, etc.)")
+    hint = dspy.OutputField(desc="A smaller math question that helps solve the problem, progressively getting closer to the answer")
+    last_hint: bool = dspy.OutputField(desc="Boolean indicating if the answer to this hint solves the original problem")
 
-# Create the predictor
-hint_generator = dspy.ChainOfThought(MathHintGenerator)
 
 class AnswerChecker(dspy.Signature):
     """Check if a student's answer to a math problem is correct."""
@@ -23,4 +24,7 @@ class AnswerChecker(dspy.Signature):
     is_correct: bool = dspy.OutputField()
     feedback: str = dspy.OutputField(desc="Helpful feedback about the answer")
 
+
+# Create the predictors
+hint_generator = dspy.ChainOfThought(MathHintGenerator)
 answer_checker = dspy.ChainOfThought(AnswerChecker)

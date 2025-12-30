@@ -10,7 +10,7 @@
     <div class="container">
         <header>
             <h1>📚 Math Hint Generator</h1>
-            <p>Powered by DSPy - Get intelligent hints and check your answers</p>
+            <p>Powered by DSPy - Get progressive hints and check your answers</p>
         </header>
 
         <main>
@@ -41,9 +41,12 @@
                     <button id="newProblemBtn" class="secondary">New Problem</button>
                 </div>
 
+                <!-- Hints Container (dynamically populated) -->
+                <div id="hintsContainer"></div>
+
                 <!-- Main Answer Check Section -->
                 <div class="answer-section main-answer">
-                    <h3>Check Your Answer:</h3>
+                    <h3>Check Your Answer to the Main Problem:</h3>
                     <div class="answer-input-group">
                         <input 
                             type="text" 
@@ -53,31 +56,6 @@
                         <button id="checkMainBtn">Check</button>
                     </div>
                     <div id="mainResult" class="result-box hidden"></div>
-                </div>
-
-                <!-- Hint Display -->
-                <div id="hintBox" class="hint-box hidden">
-                    <div class="hint-content">
-                        <span class="hint-icon">💡</span>
-                        <div>
-                            <h3>Hint Question:</h3>
-                            <p id="hintText"></p>
-                        </div>
-                    </div>
-
-                    <!-- Hint Answer Check Section -->
-                    <div class="hint-answer-section">
-                        <h4>Check Your Answer to the Hint:</h4>
-                        <div class="answer-input-group">
-                            <input 
-                                type="text" 
-                                id="hintAnswer" 
-                                placeholder="Enter your answer to the hint..."
-                            >
-                            <button id="checkHintBtn">Check</button>
-                        </div>
-                        <div id="hintResult" class="result-box hidden"></div>
-                    </div>
                 </div>
             </div>
 
