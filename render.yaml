@@ -7,4 +7,10 @@ services:
     envVars:
       - key: OPENAI_API_KEY
         sync: false
+      - key: MLFLOW_TRACKING_URI
+        sync: false
+      - key: DAGSHUB_USERNAME
+        sync: false
+      - key: DAGSHUB_TOKEN
+        sync: false
   

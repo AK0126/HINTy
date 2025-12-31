@@ -1,12 +1,15 @@
 import dspy
+import os
 import mlflow
 
 # Initialize your DSPy configuration
 lm = dspy.LM("openai/gpt-5-mini")
 dspy.configure(lm=lm)
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000/")
+mlflow.set_tracking_uri(os.getenv('MLFLOW_TRACKING_URI'))
 mlflow.set_experiment("HINTy")
+os.environ['MLFLOW_TRACKING_USERNAME'] = os.getenv('DAGSHUB_USERNAME')
+os.environ['MLFLOW_TRACKING_PASSWORD'] = os.getenv('DAGSHUB_TOKEN')
 
 mlflow.dspy.autolog()
 
