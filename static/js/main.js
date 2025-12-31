@@ -4,7 +4,7 @@ const inputSection = document.getElementById('inputSection');
 const workingSection = document.getElementById('workingSection');
 const examplesSection = document.getElementById('examplesSection');
 const problemDisplay = document.getElementById('problemDisplay');
-const getHintBtn = document.getElementById('getHintBtn');
+const revealHintBtn = document.getElementById('revealHintBtn');
 const newProblemBtn = document.getElementById('newProblemBtn');
 const hintsContainer = document.getElementById('hintsContainer');
 const errorBox = document.getElementById('error');
@@ -15,11 +15,12 @@ const checkMainBtn = document.getElementById('checkMainBtn');
 const mainResult = document.getElementById('mainResult');
 
 let currentProblem = '';
-let hints = [];
+let allHints = [];  // All hints pre-generated
+let revealedHints = [];  // Hints currently shown to user
 
 // Event Listeners
 startBtn.addEventListener('click', startProblem);
-getHintBtn.addEventListener('click', generateHint);
+revealHintBtn.addEventListener('click', revealNextHint);
 newProblemBtn.addEventListener('click', resetToInput);
 checkMainBtn.addEventListener('click', checkMainAnswer);
 
@@ -33,7 +34,7 @@ exampleBtns.forEach(btn => {
     });
 });
 
-function startProblem() {
+async function startProblem() {
     const problem = problemInput.value.trim();
     
     if (!problem) {
@@ -41,16 +42,69 @@ function startProblem() {
         return;
     }
 
-    currentProblem = problem;
-    problemDisplay.textContent = problem;
+    // Show loading state
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<span class="spinner"></span> Generating hints...';
+
+    try {
+        // Call /api/start to generate all hints upfront
+        const response = await fetch('/api/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                problem
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to start problem');
+        }
+
+        currentProblem = problem;
+        allHints = data.hints;  // Store all pre-generated hints
+        revealedHints = [];
+        
+        problemDisplay.textContent = problem;
+        
+        // Switch views
+        inputSection.classList.add('hidden');
+        examplesSection.classList.add('hidden');
+        workingSection.classList.remove('hidden');
+        
+        // Reset state
+        // resetWorkingState();
+        updateRevealHintButton();
+        
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        startBtn.disabled = false;
+        startBtn.innerHTML = '▶ Start';
+    }
+}
+
+function revealNextHint() {
+    if (revealedHints.length >= allHints.length) {
+        showError('No more hints available!');
+        return;
+    }
     
-    // Switch views
-    inputSection.classList.add('hidden');
-    examplesSection.classList.add('hidden');
-    workingSection.classList.remove('hidden');
+    const nextHintText = allHints[revealedHints.length];
+    const hintObj = {
+        id: Date.now(),
+        text: nextHintText,
+        answer: '',
+        result: null
+    };
     
-    // Reset state
-    resetWorkingState();
+    revealedHints.push(hintObj);
+    renderHint(hintObj, revealedHints.length - 1);
+    updateRevealHintButton();
+    errorBox.classList.add('hidden');
 }
 
 function resetToInput() {
@@ -61,70 +115,24 @@ function resetToInput() {
 }
 
 function resetWorkingState() {
-    hints = [];
+    allHints = [];
+    revealedHints = [];
     hintsContainer.innerHTML = '';
     errorBox.classList.add('hidden');
     mainResult.classList.add('hidden');
     mainAnswerInput.value = '';
-    updateHintButton();
 }
 
-function updateHintButton() {
-    if (hints.length > 0) {
-        getHintBtn.innerHTML = '<span style="font-size: 1.25rem;">➕</span> Get Another Hint';
+function updateRevealHintButton() {
+    if (revealedHints.length >= allHints.length) {
+        revealHintBtn.disabled = true;
+        revealHintBtn.textContent = '✅ All Hints Provided';
+    } else if (revealedHints.length > 0) {
+        revealHintBtn.disabled = false;
+        revealHintBtn.innerHTML = '<span style="font-size: 1.25rem;">➕</span> Get Another Hint';
     } else {
-        getHintBtn.innerHTML = '💡 Get a Hint';
-    }
-}
-
-function disableHintButton() {
-    getHintBtn.innerHTML = '✅ All Hints Provided';
-}
-
-async function generateHint() {
-    getHintBtn.disabled = true;
-    getHintBtn.innerHTML = '<span class="spinner"></span> Getting Hint...';
-    errorBox.classList.add('hidden');
-
-    try {
-        const previousHint = hints.length > 0 ? hints[hints.length - 1].text : null;
-        
-        const response = await fetch('/api/hint', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                problem: currentProblem,
-                previous_hint: previousHint,
-                hint_number: hints.length + 1
-            })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to generate hint');
-        }
-
-        const hintObj = {
-            id: Date.now(),
-            text: data.hint,
-            answer: '',
-            result: null
-        };
-        
-        hints.push(hintObj);
-        if (!data.done) {
-            renderHint(hintObj, hints.length - 1);
-            updateHintButton();
-            getHintBtn.disabled = false;
-        } else {
-            renderDone(hintObj, hints.length - 1);
-            disableHintButton();
-        }
-    } catch (error) {
-        showError(error.message);
+        revealHintBtn.disabled = false;
+        revealHintBtn.innerHTML = '💡 Get Hint';
     }
 }
 
@@ -168,25 +176,8 @@ function renderHint(hint, index) {
     checkBtn.addEventListener('click', () => checkHintAnswer(index));
 }
 
-function renderDone(hint, index) {
-    const hintElement = document.createElement('div');
-    hintElement.className = 'hint-box';
-    hintElement.id = `hint-${hint.id}`;
-    hintElement.innerHTML = `
-        <div class="hint-content">
-            <span class="hint-icon">💡</span>
-            <div>
-                <h3>Hint ${index + 1}:</h3>
-                <p>${hint.text}</p>
-            </div>
-        </div>
-    `;
-    
-    hintsContainer.appendChild(hintElement);
-}
-
 async function checkHintAnswer(hintIndex) {
-    const hint = hints[hintIndex];
+    const hint = revealedHints[hintIndex];
     const answerInput = document.getElementById(`hint-answer-${hint.id}`);
     const checkBtn = document.getElementById(`check-hint-${hint.id}`);
     const resultBox = document.getElementById(`hint-result-${hint.id}`);
@@ -209,7 +200,7 @@ async function checkHintAnswer(hintIndex) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ problem: hint.text, answer })
+            body: JSON.stringify({ problem: hint.text, context: currentProblem, answer })
         });
 
         const data = await response.json();
@@ -218,7 +209,7 @@ async function checkHintAnswer(hintIndex) {
             throw new Error(data.error || 'Failed to check hint answer');
         }
 
-        hints[hintIndex].result = data;
+        revealedHints[hintIndex].result = data;
         showResult(resultBox, data.is_correct, data.feedback);
     } catch (error) {
         showError(error.message);
@@ -247,7 +238,7 @@ async function checkMainAnswer() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ problem: currentProblem, answer })
+            body: JSON.stringify({ problem: currentProblem, context: '', answer })
         });
 
         const data = await response.json();
