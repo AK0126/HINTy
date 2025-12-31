@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, session
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import os
 import secrets
@@ -10,12 +10,10 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
-app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(16))
 
 
 @app.route('/', methods=['GET'])
 def index():
-    session['answered'] = False
     return render_template('index.html')
 
 
