@@ -1,6 +1,9 @@
 import dspy
 import os
 import mlflow
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize your DSPy configuration
 lm = dspy.LM("openai/gpt-5-mini")

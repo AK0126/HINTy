@@ -1,12 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import os
-import secrets
 
 from hinty import hint_generator, answer_checker
-
-from dotenv import load_dotenv
-load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
