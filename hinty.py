@@ -1,21 +1,4 @@
 import dspy
-import os
-import mlflow
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# Initialize your DSPy configuration
-lm = dspy.LM("openai/gpt-5-mini")
-dspy.configure(lm=lm)
-
-mlflow.set_tracking_uri(os.getenv('MLFLOW_TRACKING_URI'))
-mlflow.set_experiment("HINTy")
-os.environ['MLFLOW_TRACKING_USERNAME'] = os.getenv('DAGSHUB_USERNAME')
-os.environ['MLFLOW_TRACKING_PASSWORD'] = os.getenv('DAGSHUB_TOKEN')
-
-mlflow.dspy.autolog()
-
 
 # DSPy Signatures
 class MathHintsGenerator(dspy.Signature):

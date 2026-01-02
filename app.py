@@ -2,10 +2,35 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import os
 
-from hinty import hint_generator, answer_checker
+import mlflow
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+# Set up MLflow
+def setup_mlflow():
+    try:
+        uri = os.getenv('MLFLOW_TRACKING_URI')
+        username = os.getenv('DAGSHUB_USERNAME') 
+        token = os.getenv('DAGSHUB_TOKEN')
+        
+        if all([uri, username, token]):
+            os.environ['MLFLOW_TRACKING_USERNAME'] = username
+            os.environ['MLFLOW_TRACKING_PASSWORD'] = token
+            mlflow.set_tracking_uri(uri)
+            mlflow.set_experiment("HINTy")
+            return True
+    except Exception as e:
+        print(f"MLflow setup failed: {e}")
+    return False
+
+# Set up MLflow first
+MLFLOW_ENABLED = setup_mlflow()
+
+from hinty import hint_generator, answer_checker
 
 
 @app.route('/', methods=['GET'])
