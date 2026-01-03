@@ -2,7 +2,7 @@ import dspy
 
 # Initialize your DSPy configuration
 lm = dspy.LM("openai/gpt-5-mini")
-#dspy.configure(lm=lm)
+dspy.configure(lm=lm)
 
 
 # DSPy Signatures
