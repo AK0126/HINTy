@@ -1,5 +1,10 @@
 import dspy
 
+# Initialize your DSPy configuration
+lm = dspy.LM("openai/gpt-5-mini")
+#dspy.configure(lm=lm)
+
+
 # DSPy Signatures
 class MathHintsGenerator(dspy.Signature):
     """Generate a sequence of helpful hints as smaller math questions that guide towards solving the problem. 
