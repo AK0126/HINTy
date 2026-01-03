@@ -1,14 +1,24 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import os
-
 import mlflow
 from dotenv import load_dotenv
+import traceback
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+# Force error output to stdout
+@app.errorhandler(500)
+def internal_error(error):
+    print("=" * 80, file=sys.stderr)
+    print("500 ERROR CAUGHT:", file=sys.stderr)
+    print(traceback.format_exc(), file=sys.stderr)
+    print("=" * 80, file=sys.stderr)
+    return jsonify({'error': 'Internal server error', 'details': str(error)}), 500
+
 
 # Set up MLflow
 def setup_mlflow():
