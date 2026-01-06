@@ -23,6 +23,7 @@ def setup_mlflow():
             os.environ['MLFLOW_TRACKING_PASSWORD'] = token
             mlflow.set_tracking_uri(uri)
             mlflow.set_experiment("HINTy")
+            mlflow.dspy.autolog()
             return True
     except Exception as e:
         print(f"MLflow setup failed: {e}")
@@ -76,8 +77,6 @@ def check_answer():
         
         # Check answer using DSPy
         result = answer_checker(problem=problem, context=context, student_answer=answer)
-        
-        # Parse the is_correct field (handle various formats)
         is_correct = result.is_correct
         
         return jsonify({
