@@ -8,7 +8,7 @@ Check it out here: [https://hinty.onrender.com](https://hinty.onrender.com)
 (I'm deploying the website on the Render free plan, so it takes around ~50 seconds for the website to start up. Sorry!)
 
 ## Features
-The backend prompts GPT-5-mini using [**DSPy**](https://dspy.ai/), a library that "compiles AI programs into effective prompts" for language models. Instead of directly prompting GPT, DSPy allows builders to work with modularized Python code, which is then converted into LM prompts (analogous to C code being compiled into assembly, for example.) All the DSPy used in this project is in `hinty.py`. 
+The backend prompts GPT-5-mini using [**DSPy**](https://dspy.ai/), a library that "compiles AI programs into effective prompts" for language models. Instead of directly prompting GPT, DSPy allows builders to work with modularized Python code, which is then converted into LM prompts (analogous to compiling C code into assembly, for example.) All the DSPy used in this project is in `hinty.py`. 
 
 The app also traces all LM calls using MLflow, to understand how the LM behaves under the hood (ex. looking at how the LM reasons in a Chain-of-Thought prompt, below.) 
 
@@ -44,4 +44,4 @@ Instead, here are some possible next steps for improving our AI pipeline:
 
 Here are also some places for improvement from a user experience perspective:
 - The time it takes to call the OpenAI API and generate a list of hints is currently super long, taking around 30 seconds! We can try decreasing this latency, for example by asynchronously calling the API in the background.
-- There are currently no safeguards in place to detect if a user inputs a math question: they can input any text as a "math question," and irrelevant prompts confuses our program. We can try detecting whether a user inputted a valid math problem using another DSPy module.
+- There are currently no safeguards in place to detect if a user inputs a math question: they can input any text as a "math question," and irrelevant prompts confuse our program. We can try detecting whether a user inputted a valid math problem using another DSPy module.
